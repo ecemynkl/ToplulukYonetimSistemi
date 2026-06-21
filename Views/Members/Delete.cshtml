@@ -1,45 +1,47 @@
-﻿@model ToplulukYonetimSistemi.Models.Member
+@model ToplulukYonetimSistemi.Models.Member
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Üyeyi Sil";
 }
 
-<h1>Delete</h1>
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">Silme Onayı</p>
+        <h1>Üyeyi Sil</h1>
+    </div>
+    <a asp-action="Index" class="btn btn-soft">Vazgeç</a>
+</section>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Member</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FullName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FullName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Phone)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Phone)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Department)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Department)
+<div class="info-panel">
+    <p class="delete-warning">
+        @Model.FullName adlı üyeyi silmek istediğinize emin misiniz?
+    </p>
+
+    <dl>
+        <dt>E-Posta</dt>
+        <dd>@(Model.Email ?? "-")</dd>
+        <dt>Bölüm</dt>
+        <dd>@(Model.Department ?? "-")</dd>
+        <dt>Topluluklar</dt>
+        <dd>
+            @if (Model.MemberCommunities.Any())
+            {
+                <div class="tag-list">
+                    @foreach (var community in Model.MemberCommunities)
+                    {
+                        <span class="member-tag">@community.Community?.Name</span>
+                    }
+                </div>
+            }
+            else
+            {
+                <span>Topluluk yok</span>
+            }
         </dd>
     </dl>
-    
+
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <button type="submit" class="btn btn-danger btn-action">Üyeyi Sil</button>
     </form>
 </div>

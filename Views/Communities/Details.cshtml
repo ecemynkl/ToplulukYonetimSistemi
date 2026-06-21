@@ -1,73 +1,89 @@
-﻿@model ToplulukYonetimSistemi.Models.Community
+@model ToplulukYonetimSistemi.Models.Community
 
 @{
     ViewData["Title"] = "Topluluk Detayları";
+    var images = new[]
+    {
+        Url.Content("~/images/community-science.svg"),
+        Url.Content("~/images/community-art.svg"),
+        Url.Content("~/images/community-tech.svg"),
+        Url.Content("~/images/community-sport.svg")
+    };
+    var image = !string.IsNullOrWhiteSpace(Model.CoverImagePath)
+        ? Url.Content(Model.CoverImagePath)
+        : images[Math.Abs(Model.Id) % images.Length];
+    var upcomingEvents = Model.Events
+        .Where(e => e.EventDate >= DateTime.Today)
+        .OrderBy(e => e.EventDate)
+        .Take(4)
+        .ToList();
 }
 
-<h1>Topluluk Detayları</h1>
-
-<div>
-    <h4>Topluluk Bilgileri</h4>
-    <hr />
-
-    <dl class="row">
-
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CreatedDate)
-        </dd>
-
-    </dl>
-
-    <hr />
-
-    <h4>Üyeler</h4>
-
-    @if (Model.MemberCommunities != null && Model.MemberCommunities.Any())
-    {
-        <ul class="list-group">
-            @foreach (var item in Model.MemberCommunities)
+<section class="community-banner" style="background-image: linear-gradient(90deg, rgba(17,24,39,.94), rgba(17,24,39,.48)), url('@image')">
+    <div>
+        <p class="eyebrow">Topluluk Detayları</p>
+        <h1>@(Model.Name ?? "Adsız Topluluk")</h1>
+        <p>@(string.IsNullOrWhiteSpace(Model.Description) ? "Bu topluluk için henüz açıklama eklenmedi." : Model.Description)</p>
+        <div class="button-row">
+            <a asp-controller="CommunityEvents" asp-action="Index" asp-route-communityId="@Model.Id" asp-route-upcomingOnly="true" class="btn btn-primary">
+                <i class="bi bi-calendar-event"></i> Yaklaşan Etkinlikler
+            </a>
+            @if (User.IsInRole("Admin"))
             {
-                <li class="list-group-item">
-                    @item.Member?.FullName
-                </li>
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-soft">
+                    <i class="bi bi-pencil-square"></i> Düzenle
+                </a>
             }
-        </ul>
-    }
-    else
+            <a asp-action="Index" class="btn btn-soft">Listeye Dön</a>
+        </div>
+    </div>
+</section>
+
+<div class="detail-grid mt-4">
+    @if (User.IsInRole("Admin"))
     {
-        <p>Bu toplulukta henüz üye bulunmamaktadır.</p>
+    <section class="info-panel">
+        <h2><i class="bi bi-people-fill"></i> Üyeler</h2>
+        @if (Model.MemberCommunities.Any())
+        {
+            <div class="member-list">
+                @foreach (var item in Model.MemberCommunities.Where(mc => mc.Member != null))
+                {
+                    var initial = string.IsNullOrWhiteSpace(item.Member!.FullName)
+                        ? "?"
+                        : item.Member.FullName[..1].ToUpperInvariant();
+
+                    <div class="member-row">
+                        <span class="avatar-dot">@initial</span>
+                        <span>@item.Member.FullName</span>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="empty-note">Bu topluluğa henüz üye eklenmedi.</p>
+        }
+    </section>
     }
 
-</div>
-
-<div class="mt-3">
-
-    <a asp-action="Edit"
-       asp-route-id="@Model?.Id"
-       class="btn btn-warning">
-        Düzenle
-    </a>
-
-    <a asp-action="Index"
-       class="btn btn-secondary">
-        Listeye Dön
-    </a>
-
+    <section class="info-panel">
+        <h2><i class="bi bi-calendar-week"></i> Yaklaşan Etkinlikler</h2>
+        @if (upcomingEvents.Any())
+        {
+            <div class="event-stack">
+                @foreach (var eventItem in upcomingEvents)
+                {
+                    <div class="event-row">
+                        <span>@eventItem.EventDate.ToString("dd.MM.yyyy")</span>
+                        <strong>@eventItem.Title</strong>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="empty-note">Yaklaşan etkinlik bulunmuyor.</p>
+        }
+    </section>
 </div>

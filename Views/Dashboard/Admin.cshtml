@@ -1,0 +1,86 @@
+@model ToplulukYonetimSistemi.Models.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Yönetici Paneli";
+}
+
+<section class="page-heading">
+    <div>
+        <h1>Yönetici Paneli</h1>
+    </div>
+</section>
+
+<div class="quick-actions-grid">
+    <a asp-controller="Communities" asp-action="Create" class="quick-action-card">
+        <i class="bi bi-plus-circle-fill"></i>
+        <span>Topluluk Ekle</span>
+    </a>
+    <a asp-controller="CommunityEvents" asp-action="Create" class="quick-action-card">
+        <i class="bi bi-calendar-plus-fill"></i>
+        <span>Etkinlik Ekle</span>
+    </a>
+    <a asp-controller="Members" asp-action="Create" class="quick-action-card">
+        <i class="bi bi-person-plus-fill"></i>
+        <span>Üye Ekle</span>
+    </a>
+    <a asp-controller="Announcements" asp-action="Create" class="quick-action-card">
+        <i class="bi bi-megaphone-fill"></i>
+        <span>Duyuru Ekle</span>
+    </a>
+</div>
+
+<div class="dashboard-stat-grid mt-4">
+    <div class="dashboard-stat-card">
+        <i class="bi bi-people-fill"></i>
+        <span>Topluluk</span>
+        <strong>@Model.CommunityCount</strong>
+    </div>
+    <div class="dashboard-stat-card">
+        <i class="bi bi-calendar-event-fill"></i>
+        <span>Etkinlik</span>
+        <strong>@Model.EventCount</strong>
+    </div>
+    <div class="dashboard-stat-card">
+        <i class="bi bi-person-badge-fill"></i>
+        <span>Üye</span>
+        <strong>@Model.MemberCount</strong>
+    </div>
+    <div class="dashboard-stat-card">
+        <i class="bi bi-envelope-paper-fill"></i>
+        <span>Mesaj</span>
+        <strong>@Model.ContactMessageCount</strong>
+    </div>
+</div>
+
+<div class="panel-grid mt-4">
+    <a asp-controller="Communities" asp-action="Index" class="panel-card">
+        <i class="bi bi-building panel-icon"></i>
+        <span>Topluluklar</span>
+        <strong>@Model.CommunityCount kayıt yönetiliyor.</strong>
+    </a>
+    <a asp-controller="CommunityEvents" asp-action="Index" class="panel-card">
+        <i class="bi bi-calendar-week panel-icon"></i>
+        <span>Etkinlikler</span>
+        <strong>@Model.UpcomingEventCount yaklaşan etkinlik var.</strong>
+    </a>
+    <a asp-controller="Members" asp-action="Index" class="panel-card">
+        <i class="bi bi-person-lines-fill panel-icon"></i>
+        <span>Üyeler</span>
+        <strong>@Model.MemberCount üye kaydı ve topluluk bağlantısı.</strong>
+    </a>
+    <a asp-controller="Announcements" asp-action="Index" class="panel-card">
+        <i class="bi bi-megaphone-fill panel-icon"></i>
+        <span>Duyurular</span>
+        <strong>@Model.AnnouncementCount duyuru yayınlanıyor.</strong>
+    </a>
+    <a asp-controller="JoinRequests" asp-action="Index" class="panel-card">
+        <i class="bi bi-person-check-fill panel-icon"></i>
+        <span>Katılım Talepleri</span>
+        <strong>Öğrenci topluluk başvurularını yönetin.</strong>
+    </a>
+    <a asp-controller="ContactMessages" asp-action="Index" class="panel-card">
+        <i class="bi bi-chat-left-text-fill panel-icon"></i>
+        <span>İletişim Mesajları</span>
+        <strong>@Model.ContactMessageCount kullanıcı mesajı listeleniyor.</strong>
+    </a>
+</div>

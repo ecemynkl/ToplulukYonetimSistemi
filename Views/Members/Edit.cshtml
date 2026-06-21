@@ -1,49 +1,82 @@
-﻿@model ToplulukYonetimSistemi.Models.Member
+@model ToplulukYonetimSistemi.Models.MemberCreateViewModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Üyeyi Düzenle";
 }
 
-<h1>Edit</h1>
-
-<h4>Member</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="FullName" class="control-label"></label>
-                <input asp-for="FullName" class="form-control" />
-                <span asp-validation-for="FullName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Phone" class="control-label"></label>
-                <input asp-for="Phone" class="form-control" />
-                <span asp-validation-for="Phone" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Department" class="control-label"></label>
-                <input asp-for="Department" class="form-control" />
-                <span asp-validation-for="Department" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+<section class="page-heading">
+    <div>
+        <h1>Üyeyi Düzenle</h1>
     </div>
-</div>
+    <a asp-action="Index" class="btn btn-soft">Listeye Dön</a>
+</section>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<form asp-action="Edit" enctype="multipart/form-data" class="surface-form">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-grid">
+        <div class="mb-3">
+            <label asp-for="FullName" class="form-label"></label>
+            <input asp-for="FullName" class="form-control" />
+            <span asp-validation-for="FullName" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="StudentNumber" class="form-label"></label>
+            <input asp-for="StudentNumber" class="form-control" />
+            <span asp-validation-for="StudentNumber" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Phone" class="form-label"></label>
+            <input asp-for="Phone" class="form-control" />
+            <span asp-validation-for="Phone" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Department" class="form-label"></label>
+            <input asp-for="Department" class="form-control" />
+            <span asp-validation-for="Department" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <label class="form-label">Profil Resmi</label>
+        <input type="file" name="profileImage" class="form-control" accept="image/*" />
+        @if (!string.IsNullOrWhiteSpace(Model.ProfileImagePath))
+        {
+            <small class="form-text text-muted">Mevcut profil resmi korunur; yeni resim seçerseniz güncellenir.</small>
+        }
+    </div>
+
+    <div class="mb-4">
+        <label class="form-label">Üye Olduğu Topluluklar</label>
+
+        <div class="choice-grid">
+            @foreach (var community in Model.Communities)
+            {
+                <label class="choice-card">
+                    <input type="checkbox" name="SelectedCommunityIds" value="@community.Value" checked="@community.Selected" />
+                    <span>@community.Text</span>
+                </label>
+            }
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-action">
+        <i class="bi bi-check-circle"></i> Değişiklikleri Kaydet
+    </button>
+</form>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

@@ -19,6 +19,11 @@ namespace ToplulukYonetimSistemi.Data
         public DbSet<Member> Members { get; set; }
 
         public DbSet<MemberCommunity> MemberCommunities { get; set; }
+
+        public DbSet<ContactMessage> ContactMessages { get; set; }
+
+        public DbSet<JoinRequest> JoinRequests { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<MemberCommunity>()
@@ -27,12 +32,19 @@ namespace ToplulukYonetimSistemi.Data
             modelBuilder.Entity<MemberCommunity>()
                 .HasOne(mc => mc.Member)
                 .WithMany(m => m.MemberCommunities)
-                .HasForeignKey(mc => mc.MemberId);
+                .HasForeignKey(mc => mc.MemberId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<MemberCommunity>()
                 .HasOne(mc => mc.Community)
                 .WithMany(c => c.MemberCommunities)
-                .HasForeignKey(mc => mc.CommunityId);
+                .HasForeignKey(mc => mc.CommunityId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<CommunityEvent>()
+                .HasOne(e => e.Community)
+                .WithMany(c => c.Events)
+                .HasForeignKey(e => e.CommunityId);
 
             base.OnModelCreating(modelBuilder);
         }

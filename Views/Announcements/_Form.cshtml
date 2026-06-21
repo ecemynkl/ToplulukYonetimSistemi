@@ -1,0 +1,36 @@
+@model ToplulukYonetimSistemi.Models.Announcement
+
+<div class="form-grid">
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CommunityId" class="form-label"></label>
+        <select asp-for="CommunityId" class="form-control" asp-items="ViewBag.CommunityId"></select>
+        <span asp-validation-for="CommunityId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CreatedDate" class="form-label"></label>
+        <input asp-for="CreatedDate" class="form-control" type="date" />
+        <span asp-validation-for="CreatedDate" class="text-danger"></span>
+    </div>
+</div>
+
+<div class="mb-3">
+    <label asp-for="Content" class="form-label"></label>
+    <textarea asp-for="Content" class="form-control" rows="5"></textarea>
+    <span asp-validation-for="Content" class="text-danger"></span>
+</div>
+
+<div class="mb-4">
+    <label class="form-label">Kapak Fotoğrafı</label>
+    <input type="file" name="coverImage" class="form-control" accept="image/*" />
+    @if (!string.IsNullOrWhiteSpace(Model.CoverImagePath))
+    {
+        <small class="form-text text-muted">Mevcut fotoğraf korunur; yeni fotoğraf seçerseniz güncellenir.</small>
+    }
+</div>

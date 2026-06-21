@@ -1,0 +1,53 @@
+@model ToplulukYonetimSistemi.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Giriş Yap";
+    var loginType = Model?.LoginType == "Admin" ? "Admin" : "Student";
+}
+
+<section class="login-shell">
+    <div class="login-brand">
+        <img src="~/images/myo-logo.png" alt="Bursa Uludağ Üniversitesi Orhangazi Yeniköy Asil Çelik Meslek Yüksekokulu logosu" />
+        <p class="eyebrow">Güvenli Giriş</p>
+        <h1>Topluluk Yönetim Sistemi</h1>
+    </div>
+
+    <form asp-action="Login" class="login-card">
+        <div class="login-mode-switch" role="group" aria-label="Giriş türü">
+            <button type="button" class="@(loginType == "Student" ? "active" : "")" data-login-mode="Student">
+                <i class="bi bi-mortarboard-fill"></i>
+                Öğrenci Girişi
+            </button>
+            <button type="button" class="@(loginType == "Admin" ? "active" : "")" data-login-mode="Admin">
+                <i class="bi bi-shield-lock-fill"></i>
+                Yönetici Girişi
+            </button>
+        </div>
+
+        <input asp-for="LoginType" type="hidden" id="LoginType" />
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="mb-3">
+            <label asp-for="UserName" class="form-label"></label>
+            <input asp-for="UserName" class="form-control" autocomplete="username" />
+            <span asp-validation-for="UserName" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Password" class="form-label"></label>
+            <input asp-for="Password" class="form-control" autocomplete="current-password" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-action w-100">
+            <i class="bi bi-box-arrow-in-right"></i> Giriş Yap
+        </button>
+    </form>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

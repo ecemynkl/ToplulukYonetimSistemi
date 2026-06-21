@@ -1,42 +1,92 @@
-﻿@model ToplulukYonetimSistemi.Models.Member
+@model ToplulukYonetimSistemi.Models.Member
+@using ToplulukYonetimSistemi.Models
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Üye Profili";
+    var memberEvents = ViewBag.MemberEvents as List<CommunityEvent> ?? new List<CommunityEvent>();
+    var initial = string.IsNullOrWhiteSpace(Model.FullName) ? "?" : Model.FullName[..1].ToUpperInvariant();
 }
 
-<h1>Details</h1>
+<section class="member-profile">
+    <div class="profile-card-main">
+        @if (!string.IsNullOrWhiteSpace(Model.ProfileImagePath))
+        {
+            <img src="@Url.Content(Model.ProfileImagePath)" alt="@Model.FullName profil resmi" class="profile-photo" />
+        }
+        else
+        {
+            <div class="profile-photo profile-placeholder">@initial</div>
+        }
 
-<div>
-    <h4>Member</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FullName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FullName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Phone)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Phone)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Department)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Department)
-        </dd>
-    </dl>
+        <div>
+            <p class="eyebrow">Üye Profili</p>
+            <h1>@(Model.FullName ?? "Adsız Üye")</h1>
+            <p>@(Model.Department ?? "Bölüm bilgisi eklenmedi")</p>
+            <div class="profile-meta">
+                <span><i class="bi bi-calendar-check"></i> @Model.RegisteredDate.ToString("dd.MM.yyyy")</span>
+                <span><i class="bi bi-people"></i> @Model.MemberCommunities.Count topluluk</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="button-row">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+            <i class="bi bi-pencil-square"></i> Düzenle
+        </a>
+        <a asp-action="Index" class="btn btn-soft">Listeye Dön</a>
+    </div>
+</section>
+
+<div class="detail-grid mt-4">
+    <section class="info-panel">
+        <h2><i class="bi bi-person-lines-fill"></i> İletişim</h2>
+        <dl>
+            <dt>Öğrenci Numarası</dt>
+            <dd>@(Model.StudentNumber ?? "-")</dd>
+            <dt>E-Posta</dt>
+            <dd>@(Model.Email ?? "-")</dd>
+            <dt>Telefon</dt>
+            <dd>@(Model.Phone ?? "-")</dd>
+            <dt>Bölüm</dt>
+            <dd>@(Model.Department ?? "-")</dd>
+        </dl>
+    </section>
+
+    <section class="info-panel">
+        <h2><i class="bi bi-building"></i> Katıldığı Topluluklar</h2>
+        @if (Model.MemberCommunities.Any())
+        {
+            <div class="tag-list">
+                @foreach (var item in Model.MemberCommunities)
+                {
+                    <span class="member-tag">@item.Community?.Name</span>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="empty-note">Bu üye henüz bir topluluğa bağlı değil.</p>
+        }
+    </section>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+<section class="info-panel mt-4">
+    <h2><i class="bi bi-calendar-event"></i> Katıldığı Toplulukların Etkinlikleri</h2>
+    @if (memberEvents.Any())
+    {
+        <div class="event-stack">
+            @foreach (var eventItem in memberEvents)
+            {
+                <div class="event-row">
+                    <span>@eventItem.EventDate.ToString("dd.MM.yyyy")</span>
+                    <strong>@eventItem.Title</strong>
+                    <small>@eventItem.Community?.Name</small>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="empty-note">Bu üyenin topluluklarına bağlı etkinlik bulunmuyor.</p>
+    }
+</section>

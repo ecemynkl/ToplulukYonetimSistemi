@@ -1,106 +1,141 @@
-﻿@{
+@model ToplulukYonetimSistemi.Models.HomeIndexViewModel
+
+@{
     ViewData["Title"] = "Ana Sayfa";
 }
 
-<div class="container mt-5">
-
-    <div class="p-5 mb-5 bg-dark text-white rounded-4 shadow-lg">
-
-        <div class="container-fluid py-5">
-
-            <h1 class="display-3 fw-bold">
-                Kampüs Topluluk Platformu
-            </h1>
-
-            <p class="fs-5 mt-4 col-md-8">
-                Üniversite topluluklarını keşfet,
-                etkinliklere katıl ve kampüs hayatını daha aktif hale getir.
-            </p>
-
-            <div class="mt-4">
-
-                <a asp-controller="Communities"
-                   asp-action="Index"
-                   class="btn btn-primary btn-lg me-2">
-
-                    Toplulukları Gör
-                </a>
-
-                <a asp-controller="CommunityEvents"
-                   asp-action="Index"
-                   class="btn btn-outline-light btn-lg">
-
-                    Etkinlikleri İncele
-                </a>
-
-            </div>
-
+<section class="home-hero campus-hero">
+    <div class="home-hero-content">
+        <div class="institution-mark">
+            <img src="~/images/myo-logo.png" alt="Bursa Uludağ Üniversitesi Orhangazi Yeniköy Asil Çelik Meslek Yüksekokulu logosu" />
+            <span>Bursa Uludağ Üniversitesi</span>
         </div>
 
+        <h1>Orhangazi Yeniköy Asil Çelik Meslek Yüksekokulu</h1>
+        <p>
+            Toplulukları, üyeleri, etkinlikleri ve duyuruları sade, modern ve kurumsal bir kampüs deneyimiyle takip edin.
+        </p>
+
+        <div class="button-row">
+            <a asp-controller="Communities" asp-action="Index" class="btn btn-primary btn-action">
+                <i class="bi bi-building"></i> Toplulukları Gör
+            </a>
+            <a asp-controller="CommunityEvents" asp-action="Index" class="btn btn-soft btn-action">
+                <i class="bi bi-calendar-event"></i> Etkinlikleri İncele
+            </a>
+        </div>
     </div>
 
-    <div class="row text-center">
-
-        <div class="col-md-4 mb-4">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
-                    <h3 class="fw-bold">
-                        Topluluklar
-                    </h3>
-
-                    <p class="text-muted mt-3">
-                        Kampüsteki toplulukları keşfet ve ilgini çeken gruplara katıl.
-                    </p>
-
-                </div>
-
-            </div>
-
+    <aside class="hero-summary">
+        <div>
+            <strong>@Model.CommunityCount</strong>
+            <span>Topluluk</span>
         </div>
-
-        <div class="col-md-4 mb-4">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
-                    <h3 class="fw-bold">
-                        Etkinlikler
-                    </h3>
-
-                    <p class="text-muted mt-3">
-                        Güncel etkinlikleri görüntüle ve etkinliklere katılım sağla.
-                    </p>
-
-                </div>
-
-            </div>
-
+        <div>
+            <strong>@Model.MemberCount</strong>
+            <span>Üye</span>
         </div>
-
-        <div class="col-md-4 mb-4">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
-                    <h3 class="fw-bold">
-                        Kampüs Hayatı
-                    </h3>
-
-                    <p class="text-muted mt-3">
-                        Sosyal çevreni geliştir ve üniversite deneyimini daha eğlenceli hale getir.
-                    </p>
-
-                </div>
-
-            </div>
-
+        <div>
+            <strong>@Model.UpcomingEventCount</strong>
+            <span>Yaklaşan Etkinlik</span>
         </div>
+    </aside>
+</section>
 
+<section class="about-section">
+    <div class="about-card">
+        <h2>Hakkımızda</h2>
+        <p>
+            Bursa Uludağ Üniversitesi Orhangazi Yeniköy Asil Çelik Meslek Yüksekokulu, 1999 yılında kurulmuş olup günümüzde modern eğitim altyapısı ve güçlü akademik kadrosuyla eğitim faaliyetlerini sürdürmektedir.
+        </p>
+        <p>
+            Yüksekokulumuzda Bilgisayar Programcılığı, Elektronik Teknolojisi, Makine, Peyzaj ve Süs Bitkileri ile Otomotiv programları olmak üzere beş farklı programda eğitim verilmektedir.
+        </p>
+        <p>
+            9000 m² kapalı alan üzerine kurulu yerleşkemizde laboratuvarlar, atölyeler, kütüphane, kafeterya ve sosyal yaşam alanlarıyla öğrencilerimize nitelikli bir eğitim ortamı sunulmaktadır.
+        </p>
+        <p>
+            Kalite odaklı eğitim anlayışını benimseyen yüksekokulumuz, ISO 9001:2015 Kalite Yönetim Sistemi Belgesine sahiptir ve öğrencilerini mesleki bilgi, beceri ve etik değerlerle geleceğe hazırlamayı amaçlamaktadır.
+        </p>
     </div>
 
-</div>
+    <div class="about-stats">
+        <div>
+            <strong>@Model.CommunityCount</strong>
+            <span>Topluluk</span>
+        </div>
+        <div>
+            <strong>@Model.MemberCount</strong>
+            <span>Üye</span>
+        </div>
+        <div>
+            <strong>@Model.UpcomingEventCount</strong>
+            <span>Yaklaşan Etkinlik</span>
+        </div>
+    </div>
+</section>
+
+<section class="home-section campus-agenda-section">
+    <div class="section-heading">
+        <div>
+            <h2>Gündem</h2>
+        </div>
+        <a asp-controller="Announcements" asp-action="Index" class="btn btn-soft">
+            <i class="bi bi-arrow-right-circle"></i> Tüm Duyurular
+        </a>
+    </div>
+
+    @if (Model.Announcements.Any())
+    {
+        <div class="campus-agenda-grid">
+            @foreach (var announcement in Model.Announcements)
+            {
+                var image = !string.IsNullOrWhiteSpace(announcement.CoverImagePath)
+                    ? Url.Content(announcement.CoverImagePath)
+                    : Url.Content("~/images/campus-hero.png");
+                var summary = announcement.Content ?? "";
+                if (summary.Length > 130)
+                {
+                    summary = summary[..130] + "...";
+                }
+
+                <article class="campus-agenda-card">
+                    <img src="@image" alt="@announcement.Title kapak fotoğrafı" />
+                    <div class="campus-agenda-body">
+                        <div class="campus-news-meta">
+                            <span><i class="bi bi-building"></i> @(announcement.Community?.Name ?? "Genel Duyuru")</span>
+                            <span><i class="bi bi-calendar3"></i> @announcement.CreatedDate.ToString("dd.MM.yyyy")</span>
+                        </div>
+                        <h3>@announcement.Title</h3>
+                        <p>@summary</p>
+                    </div>
+                </article>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="empty-announcement">
+            <h3>Henüz duyuru yayınlanmadı</h3>
+            <p>Topluluk duyuruları eklendiğinde burada öne çıkarılacak.</p>
+        </div>
+    }
+</section>
+
+<section class="feature-strip">
+    <div>
+        <i class="bi bi-people-fill"></i>
+        <h3>Topluluk Yönetimi</h3>
+        <p>Toplulukları, üyeleri ve üyelik ilişkilerini düzenli biçimde yönetin.</p>
+    </div>
+    <div>
+        <i class="bi bi-calendar-check-fill"></i>
+        <h3>Etkinlik Takibi</h3>
+        <p>Yaklaşan etkinlikleri topluluk bazlı takip edin.</p>
+    </div>
+    <div>
+        <i class="bi bi-megaphone-fill"></i>
+        <h3>Duyuru Akışı</h3>
+        <p>Kampüs içi bilgilendirmeleri ana sayfada görünür kılın.</p>
+    </div>
+</section>

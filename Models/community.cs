@@ -15,7 +15,12 @@ namespace ToplulukYonetimSistemi.Models
         [Display(Name = "Oluşturulma Tarihi")]
         public DateTime CreatedDate { get; set; }
 
-        public ICollection<MemberCommunity>? MemberCommunities { get; set; }
+        [Display(Name = "Kapak Görseli")]
+        public string? CoverImagePath { get; set; }
+
+        public ICollection<MemberCommunity> MemberCommunities { get; set; } = new List<MemberCommunity>();
+
+        public ICollection<CommunityEvent> Events { get; set; } = new List<CommunityEvent>();
 
     }
 }

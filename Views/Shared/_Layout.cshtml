@@ -1,95 +1,224 @@
-﻿<!DOCTYPE html>
+@using Microsoft.EntityFrameworkCore
+@using ToplulukYonetimSistemi.Data
+@using ToplulukYonetimSistemi.Models
+@inject AppDbContext DbContext
+
+<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Kampüs Topluluk Platformu </title>
+    <title>@ViewData["Title"] - Bursa Uludağ Üniversitesi Orhangazi Yeniköy Asil Çelik Meslek Yüksekokulu</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ToplulukYonetimSistemi.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm mb-4">
-            <div class="container">
+    @{
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+        var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+        var notifications = new List<NotificationViewItem>();
 
-                <a class="navbar-brand fw-bold"
-                   asp-controller="Home"
-                   asp-action="Index">
-                    Kampüs Topluluk Platformu
+        string ActiveClass(string controller, string? action = null)
+        {
+            return string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase)
+                && (action == null || string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase))
+                    ? "active"
+                    : "";
+        }
+
+        if (User.Identity?.IsAuthenticated == true)
+        {
+            try
+            {
+                var latestAnnouncements = await DbContext.Announcements
+                    .Include(a => a.Community)
+                    .OrderByDescending(a => a.CreatedDate)
+                    .Take(4)
+                    .ToListAsync();
+
+                var latestEvents = await DbContext.Events
+                    .Include(e => e.Community)
+                    .OrderByDescending(e => e.EventDate)
+                    .Take(4)
+                    .ToListAsync();
+
+                notifications.AddRange(latestAnnouncements.Select(a => new NotificationViewItem
+                {
+                    Icon = "bi-megaphone-fill",
+                    Title = a.Title ?? "Yeni duyuru",
+                    Text = a.Community?.Name ?? "Genel duyuru",
+                    Url = Url.Action("Index", "Announcements") ?? "#",
+                    CreatedDate = a.CreatedDate
+                }));
+
+                notifications.AddRange(latestEvents.Select(e => new NotificationViewItem
+                {
+                    Icon = "bi-calendar-event-fill",
+                    Title = e.Title ?? "Yeni etkinlik",
+                    Text = e.Community?.Name ?? e.EventDate.ToString("dd.MM.yyyy"),
+                    Url = Url.Action("Details", "CommunityEvents", new { id = e.Id }) ?? "#",
+                    CreatedDate = e.EventDate
+                }));
+
+                notifications = notifications
+                    .OrderByDescending(n => n.CreatedDate)
+                    .Take(6)
+                    .ToList();
+            }
+            catch
+            {
+                notifications = new List<NotificationViewItem>();
+            }
+        }
+
+        var notificationKey = notifications.Any()
+            ? string.Join("|", notifications.Select(n => $"{n.Title}-{n.CreatedDate.Ticks}"))
+            : "empty";
+    }
+
+    <header>
+        <nav class="navbar app-navbar compact-navbar shadow-sm mb-4 sticky-top">
+            <div class="container nav-container-wide">
+                <a class="navbar-brand fw-bold brand-lockup compact-brand" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/myo-logo.png" alt="Bursa Uludağ Üniversitesi Orhangazi Yeniköy Asil Çelik Meslek Yüksekokulu logosu" />
+                    <span class="brand-title">
+                        <strong>Bursa Uludağ Üniversitesi</strong>
+                        <small>Orhangazi Yeniköy Asil Çelik Meslek Yüksekokulu</small>
+                    </span>
                 </a>
 
-                <button class="navbar-toggler"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#navbarNav">
+                <div class="navbar-tools">
+                    <a class="nav-icon-button @ActiveClass("Home", "Index")" asp-controller="Home" asp-action="Index" aria-label="Ana Sayfa" title="Ana Sayfa">
+                        <i class="bi bi-house-door-fill"></i>
+                    </a>
 
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <a class="nav-icon-button @ActiveClass("Dashboard")" asp-controller="Dashboard" asp-action="Index" aria-label="Panel" title="Panel">
+                            <i class="bi bi-speedometer2"></i>
+                        </a>
 
-                <div class="collapse navbar-collapse"
-                     id="navbarNav">
+                        <div class="dropdown notification-item">
+                            <button class="nav-icon-button notification-button" type="button" data-bs-toggle="dropdown" data-bs-display="static" data-notification-key="@notificationKey" aria-expanded="false" aria-label="Bildirimler" title="Bildirimler">
+                                <i class="bi bi-bell-fill"></i>
+                                @if (notifications.Any())
+                                {
+                                    <span class="notification-badge">@notifications.Count</span>
+                                }
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end notification-menu">
+                                <div class="notification-header">
+                                    <strong>Bildirim Merkezi</strong>
+                                    <span>@notifications.Count yeni kayıt</span>
+                                </div>
+                                @if (notifications.Any())
+                                {
+                                    @foreach (var notification in notifications)
+                                    {
+                                        <a class="notification-row" href="@notification.Url">
+                                            <i class="bi @notification.Icon"></i>
+                                            <span>
+                                                <strong>@notification.Title</strong>
+                                                <small>@notification.Text</small>
+                                            </span>
+                                        </a>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="notification-empty">Henüz bildirim yok.</div>
+                                }
+                            </div>
+                        </div>
+                    }
 
-                    <ul class="navbar-nav ms-auto">
-
-                        <li class="nav-item">
-                            <a class="nav-link"
-                               asp-controller="Home"
-                               asp-action="Index">
-                                Ana Sayfa
+                    <div class="dropdown app-menu-dropdown">
+                        <button class="nav-icon-button menu-toggle" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" aria-label="Menüyü aç" title="Menü">
+                            <i class="bi bi-list"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end app-menu">
+                            @if (User.Identity?.IsAuthenticated == true)
+                            {
+                                <a class="dropdown-item @ActiveClass("Communities")" asp-controller="Communities" asp-action="Index">
+                                    <i class="bi bi-building"></i> Topluluklar
+                                </a>
+                                <a class="dropdown-item @ActiveClass("CommunityEvents")" asp-controller="CommunityEvents" asp-action="Index">
+                                    <i class="bi bi-calendar-event"></i> Etkinlikler
+                                </a>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <a class="dropdown-item @ActiveClass("Members")" asp-controller="Members" asp-action="Index">
+                                        <i class="bi bi-person-lines-fill"></i> Üyeler
+                                    </a>
+                                }
+                                <a class="dropdown-item @ActiveClass("Announcements")" asp-controller="Announcements" asp-action="Index">
+                                    <i class="bi bi-megaphone-fill"></i> Duyurular
+                                </a>
+                            }
+                            <a class="dropdown-item @ActiveClass("Contact")" asp-controller="Contact" asp-action="Index">
+                                <i class="bi bi-chat-left-text"></i> İletişim
                             </a>
-                        </li>
+                        </div>
+                    </div>
 
-                        <li class="nav-item">
-                            <a class="nav-link"
-                               asp-controller="Communities"
-                               asp-action="Index">
-                                Topluluklar
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link"
-                               asp-controller="CommunityEvents"
-                               asp-action="Index">
-                                Etkinlikler
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link"
-                               asp-controller="Contact"
-                               asp-action="Index">
-                                İletişim
-
-                        <li class="nav-item">
-                            <a class="nav-link"
-                               asp-controller="Members"
-                               asp-action="Index">
-                                Üyeler
-                            </a>
-                        </li>
-                            </a>
-                        </li>
-
-                    </ul>
-
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <a class="nav-icon-button nav-link-exit" asp-controller="Account" asp-action="Logout" data-confirm="Çıkış yapmak istediğine emin misin?" aria-label="Çıkış Yap" title="Çıkış Yap">
+                            <i class="bi bi-box-arrow-right"></i>
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="login-pill @ActiveClass("Account", "Login")" asp-controller="Account" asp-action="Login">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            <span>Giriş</span>
+                        </a>
+                    }
                 </div>
-
             </div>
         </nav>
     </header>
-    <div class="container">
+
+    <div class="container page-container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - ToplulukYonetimSistemi - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="app-footer">
+        <div class="container app-footer-grid">
+            <div class="footer-brand">
+                <img src="~/images/myo-logo.png" alt="Okul logosu" />
+                <div>
+                    <strong>Bursa Uludağ Üniversitesi</strong>
+                    <span>Orhangazi Yeniköy Asil Çelik Meslek Yüksekokulu</span>
+                </div>
+            </div>
+            <div class="footer-links">
+                <a asp-controller="Home" asp-action="Index">Ana Sayfa</a>
+                <a asp-controller="Communities" asp-action="Index">Topluluklar</a>
+                <a asp-controller="CommunityEvents" asp-action="Index">Etkinlikler</a>
+                <a asp-controller="Contact" asp-action="Index">İletişim</a>
+            </div>
+            <div class="footer-social">
+                <a href="https://www.instagram.com/oyacmyo/" target="_blank" rel="noopener noreferrer" aria-label="Okul Instagram">
+                    <i class="bi bi-instagram"></i>
+                    <span>Okul</span>
+                </a>
+                <a href="https://www.instagram.com/oyactopluluk/" target="_blank" rel="noopener noreferrer" aria-label="Topluluk Instagram">
+                    <i class="bi bi-instagram"></i>
+                    <span>Topluluk</span>
+                </a>
+            </div>
+            <div class="footer-copy">
+                &copy; 2026 Tüm hakları saklıdır.
+            </div>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

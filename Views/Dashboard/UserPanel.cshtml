@@ -1,0 +1,133 @@
+@model ToplulukYonetimSistemi.Models.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Öğrenci Paneli";
+    var member = Model.CurrentMember;
+    var profileImage = !string.IsNullOrWhiteSpace(member?.ProfileImagePath)
+        ? Url.Content(member.ProfileImagePath)
+        : Url.Content("~/images/myo-logo.png");
+}
+
+<section class="page-heading">
+    <div>
+        <h1>Öğrenci Paneli</h1>
+    </div>
+</section>
+
+@if (TempData["CommunitySuccess"] is string successMessage)
+{
+    <div class="alert alert-success alert-modern" role="alert">@successMessage</div>
+}
+@if (TempData["CommunityWarning"] is string warningMessage)
+{
+    <div class="alert alert-warning alert-modern" role="alert">@warningMessage</div>
+}
+
+<div class="student-dashboard-layout">
+    <aside class="student-profile-card">
+        <div class="student-profile-header">
+            <img src="@profileImage" alt="Öğrenci profil görseli" />
+            <div>
+                <span>Öğrenci Bilgileri</span>
+                <h2>@(member?.FullName ?? User.Identity?.Name ?? "Öğrenci")</h2>
+            </div>
+        </div>
+
+        <dl class="student-info-list">
+            <div>
+                <dt>Öğrenci No</dt>
+                <dd>@(member?.StudentNumber ?? "-")</dd>
+            </div>
+            <div>
+                <dt>Bölüm</dt>
+                <dd>@(member?.Department ?? "-")</dd>
+            </div>
+            <div>
+                <dt>E-Posta</dt>
+                <dd>@(member?.Email ?? "-")</dd>
+            </div>
+            <div>
+                <dt>Telefon</dt>
+                <dd>@(member?.Phone ?? "-")</dd>
+            </div>
+            <div>
+                <dt>Üye Olduğu Topluluk</dt>
+                <dd>@(member?.MemberCommunities.Count ?? 0) / 5</dd>
+            </div>
+        </dl>
+    </aside>
+
+    <div class="student-dashboard-main">
+        <div class="dashboard-stat-grid">
+            <div class="dashboard-stat-card">
+                <i class="bi bi-building"></i>
+                <span>Topluluk</span>
+                <strong>@Model.CommunityCount</strong>
+            </div>
+            <div class="dashboard-stat-card">
+                <i class="bi bi-calendar-check"></i>
+                <span>Yaklaşan Etkinlik</span>
+                <strong>@Model.UpcomingEventCount</strong>
+            </div>
+            <div class="dashboard-stat-card">
+                <i class="bi bi-megaphone"></i>
+                <span>Duyuru</span>
+                <strong>@Model.AnnouncementCount</strong>
+            </div>
+        </div>
+
+        <section class="pending-request-card">
+            <div class="section-title-row">
+                <div>
+                    <span>Topluluk İşlemleri</span>
+                    <h2>Bekleyen Katılma İstekleri</h2>
+                </div>
+                <a asp-controller="Communities" asp-action="Index" class="btn btn-primary btn-sm">
+                    <i class="bi bi-plus-circle"></i> Topluluklara Git
+                </a>
+            </div>
+
+            @if (Model.PendingJoinRequests.Any())
+            {
+                <div class="pending-request-list">
+                    @foreach (var request in Model.PendingJoinRequests)
+                    {
+                        <div class="pending-request-row">
+                            <div>
+                                <strong>@(request.Community?.Name ?? "Topluluk")</strong>
+                                <span>@request.RequestedDate.ToString("dd.MM.yyyy HH:mm") tarihinde gönderildi</span>
+                            </div>
+                            <form asp-controller="Communities" asp-action="CancelJoinRequest" asp-route-id="@request.Id" method="post">
+                                <button type="submit" class="btn btn-danger btn-sm icon-action-btn" data-confirm="Bu katılma isteğini silmek istediğine emin misin?" data-bs-toggle="tooltip" data-bs-title="İsteği Sil" aria-label="İsteği Sil">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </form>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="empty-note">Bekleyen katılma isteğiniz bulunmuyor.</p>
+            }
+        </section>
+    </div>
+</div>
+
+<div class="panel-grid mt-4">
+    <a asp-controller="Communities" asp-action="Index" class="panel-card">
+        <i class="bi bi-diagram-3-fill panel-icon"></i>
+        <span>Topluluklar</span>
+        <strong>Toplulukları incele ve katılma isteği gönder.</strong>
+    </a>
+    <a asp-controller="CommunityEvents" asp-action="Index" class="panel-card">
+        <i class="bi bi-calendar-event panel-icon"></i>
+        <span>Etkinlikler</span>
+        <strong>Yaklaşan etkinlikleri takip et.</strong>
+    </a>
+    <a asp-controller="Announcements" asp-action="Index" class="panel-card">
+        <i class="bi bi-bell-fill panel-icon"></i>
+        <span>Duyurular</span>
+        <strong>Güncel duyuruları takip et.</strong>
+    </a>
+</div>

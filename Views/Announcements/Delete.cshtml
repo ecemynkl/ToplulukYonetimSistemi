@@ -1,0 +1,33 @@
+@model ToplulukYonetimSistemi.Models.Announcement
+
+@{
+    ViewData["Title"] = "Duyuruyu Sil";
+}
+
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">Silme Onayı</p>
+        <h1>Duyuruyu Sil</h1>
+    </div>
+    <a asp-action="Index" class="btn btn-soft">Vazgeç</a>
+</section>
+
+<div class="info-panel">
+    <p class="delete-warning">
+        "@Model.Title" başlıklı duyuruyu silmek istediğinize emin misiniz?
+    </p>
+
+    <dl>
+        <dt>Topluluk</dt>
+        <dd>@(Model.Community?.Name ?? "-")</dd>
+        <dt>Tarih</dt>
+        <dd>@Model.CreatedDate.ToString("dd.MM.yyyy")</dd>
+        <dt>İçerik</dt>
+        <dd>@Model.Content</dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger btn-action">Duyuruyu Sil</button>
+    </form>
+</div>

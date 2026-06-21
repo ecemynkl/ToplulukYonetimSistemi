@@ -1,53 +1,81 @@
-﻿@model IEnumerable<ToplulukYonetimSistemi.Models.Member>
+@model IEnumerable<ToplulukYonetimSistemi.Models.Member>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Üyeler";
 }
 
-<h1>Index</h1>
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">Topluluk Katılımcıları</p>
+        <h1>Üyeler</h1>
+    </div>
+    <a asp-action="Create" class="btn btn-primary btn-action">
+        <i class="bi bi-person-plus"></i> Yeni Üye Ekle
+    </a>
+</section>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FullName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Phone)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Department)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FullName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Phone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Department)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="table-shell modern-table-shell compact-table-shell">
+    <table class="table modern-table compact-member-table align-middle">
+        <thead>
+            <tr>
+                <th>Üye</th>
+                <th>Öğrenci No</th>
+                <th>E-Posta</th>
+                <th>Telefon</th>
+                <th>Bölüm</th>
+                <th>Topluluklar</th>
+                <th class="text-end">İşlemler</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                var initial = string.IsNullOrWhiteSpace(item.FullName) ? "?" : item.FullName[..1].ToUpperInvariant();
+
+                <tr>
+                    <td>
+                        <div class="entity-cell compact-entity-cell">
+                            <span class="avatar-dot">@initial</span>
+                            <div>
+                                <strong>@item.FullName</strong>
+                                <span>Üye kaydı</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>@(item.StudentNumber ?? "-")</td>
+                    <td>@item.Email</td>
+                    <td>@item.Phone</td>
+                    <td>@item.Department</td>
+                    <td>
+                        @if (item.MemberCommunities.Any())
+                        {
+                            <div class="tag-list compact-tag-list">
+                                @foreach (var community in item.MemberCommunities)
+                                {
+                                    <span class="member-tag">@community.Community?.Name</span>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <span class="table-muted">Topluluk yok</span>
+                        }
+                    </td>
+                    <td class="text-end">
+                        <div class="table-actions icon-actions">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-soft btn-sm icon-action-btn" data-bs-toggle="tooltip" data-bs-title="Detay" aria-label="Detay">
+                                <i class="bi bi-eye-fill"></i>
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm icon-action-btn" data-bs-toggle="tooltip" data-bs-title="Düzenle" aria-label="Düzenle">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm icon-action-btn" data-bs-toggle="tooltip" data-bs-title="Sil" aria-label="Sil">
+                                <i class="bi bi-trash-fill"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

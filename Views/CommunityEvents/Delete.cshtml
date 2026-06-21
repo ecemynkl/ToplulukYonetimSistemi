@@ -12,7 +12,6 @@
 
 <div>
 
-    ```
     <h4>Etkinlik Bilgileri</h4>
     <hr />
 
@@ -47,7 +46,7 @@
         </dt>
 
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Community.Name)
+            @(Model.Community?.Name ?? "-")
         </dd>
 
     </dl>
@@ -66,6 +65,5 @@
         </a>
 
     </form>
-    ```
 
 </div>

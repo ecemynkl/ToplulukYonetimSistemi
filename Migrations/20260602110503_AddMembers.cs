@@ -67,29 +67,47 @@ namespace ToplulukYonetimSistemi.Migrations
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Department = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CommunityId = table.Column<int>(type: "int", nullable: false)
+                    Department = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Members", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MemberCommunities",
+                columns: table => new
+                {
+                    MemberId = table.Column<int>(type: "int", nullable: false),
+                    CommunityId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MemberCommunities", x => new { x.MemberId, x.CommunityId });
                     table.ForeignKey(
-                        name: "FK_Members_Communities_CommunityId",
+                        name: "FK_MemberCommunities_Communities_CommunityId",
                         column: x => x.CommunityId,
                         principalTable: "Communities",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MemberCommunities_Members_MemberId",
+                        column: x => x.MemberId,
+                        principalTable: "Members",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Members_CommunityId",
-                table: "Members",
+                name: "IX_MemberCommunities_CommunityId",
+                table: "MemberCommunities",
                 column: "CommunityId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "MemberCommunities");
+
             migrationBuilder.DropTable(
                 name: "Members");
 

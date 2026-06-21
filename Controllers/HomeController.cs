@@ -1,14 +1,43 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using ToplulukYonetimSistemi.Data;
 using ToplulukYonetimSistemi.Models;
 
 namespace ToplulukYonetimSistemi.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly AppDbContext _context;
+
+        public HomeController(AppDbContext context)
         {
-            return View();
+            _context = context;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var model = new HomeIndexViewModel();
+
+            try
+            {
+                model.CommunityCount = await _context.Communities.CountAsync();
+                model.MemberCount = await _context.Members.CountAsync();
+                model.UpcomingEventCount = await _context.Events
+                    .CountAsync(e => e.EventDate >= DateTime.Today);
+                await DatabaseRepair.EnsureAnnouncementMediaSchemaAsync(_context);
+                model.Announcements = await _context.Announcements
+                    .Include(a => a.Community)
+                    .OrderByDescending(a => a.CreatedDate)
+                    .Take(3)
+                    .ToListAsync();
+            }
+            catch
+            {
+                model.Announcements = new List<Announcement>();
+            }
+
+            return View(model);
         }
 
         public IActionResult Privacy()

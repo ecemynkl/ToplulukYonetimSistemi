@@ -1,86 +1,94 @@
-﻿@model IEnumerable<ToplulukYonetimSistemi.Models.CommunityEvent>
+@model IEnumerable<ToplulukYonetimSistemi.Models.CommunityEvent>
 
 @{
     ViewData["Title"] = "Etkinlikler";
 }
 
-<div class="container mt-4">
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="fw-bold">Etkinlikler</h1>
-
-        <a asp-action="Create" class="btn btn-primary">
-            Yeni Etkinlik Oluştur
-        </a>
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">Etkinlik Takvimi</p>
+        <h1>
+            @if (ViewBag.UpcomingOnly == true && ViewBag.CommunityName != null)
+            {
+                <text>@ViewBag.CommunityName Yaklaşan Etkinlikleri</text>
+            }
+            else if (ViewBag.CommunityName != null)
+            {
+                <text>@ViewBag.CommunityName Etkinlikleri</text>
+            }
+            else
+            {
+                <text>Etkinlikler</text>
+            }
+        </h1>
     </div>
 
-    <table class="table table-striped table-hover shadow-sm">
-        <thead class="table-dark">
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Title)
-                </th>
+    <div class="button-row">
+        @if (ViewBag.CommunityId != null)
+        {
+            <a asp-action="Index" class="btn btn-soft"><i class="bi bi-grid"></i> Tüm Etkinlikler</a>
+        }
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Create" class="btn btn-primary btn-action"><i class="bi bi-plus-circle"></i> Yeni Etkinlik Oluştur</a>
+        }
+    </div>
+</section>
 
-                <th>
-                    @Html.DisplayNameFor(model => model.Description)
-                </th>
+<form asp-action="Index" method="get" class="surface-form event-filter-form mb-4">
+    <input type="hidden" name="upcomingOnly" value="@((ViewBag.UpcomingOnly == true).ToString().ToLowerInvariant())" />
+    <div class="row g-3 align-items-end">
+        <div class="col-md-8 col-lg-6">
+            <label for="communityId" class="form-label">Topluluk</label>
+            <select id="communityId" name="communityId" class="form-control" asp-items="ViewBag.CommunityOptions"></select>
+        </div>
+        <div class="col-md-auto">
+            <button type="submit" class="btn btn-primary btn-action">
+                <i class="bi bi-filter-circle"></i> Filtrele
+            </button>
+        </div>
+    </div>
+</form>
 
-                <th>
-                    @Html.DisplayNameFor(model => model.EventDate)
-                </th>
+<div class="management-card-grid event-card-grid">
+    @foreach (var item in Model)
+    {
+        var image = !string.IsNullOrWhiteSpace(item.CoverImagePath)
+            ? Url.Content(item.CoverImagePath)
+            : Url.Content("~/images/campus-hero.png");
 
-                <th>
-                    @Html.DisplayNameFor(model => model.Community)
-                </th>
+        <article class="management-card event-card">
+            <img src="@image" alt="@item.Title etkinlik görseli" class="management-card-media" />
+            <div class="management-card-body">
+                <div class="management-card-title">
+                    <i class="bi bi-calendar-event"></i>
+                    <div>
+                        <h2>@item.Title</h2>
+                        <span>@(item.Community?.Name ?? "Topluluk belirtilmedi")</span>
+                    </div>
+                </div>
 
-                <th>
-                    İşlemler
-                </th>
-            </tr>
-        </thead>
+                <p>@(string.IsNullOrWhiteSpace(item.Description) ? "Bu etkinlik için henüz açıklama eklenmedi." : item.Description)</p>
 
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Title)
-                    </td>
+                <div class="metric-row">
+                    <span><i class="bi bi-clock"></i> @item.EventDate.ToString("dd.MM.yyyy")</span>
+                </div>
+            </div>
 
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Description)
-                    </td>
-
-                    <td>
-                        @Html.DisplayFor(modelItem => item.EventDate)
-                    </td>
-
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Community.Name)
-                    </td>
-
-                    <td>
-                        <a asp-action="Edit"
-                           asp-route-id="@item.Id"
-                           class="btn btn-warning btn-sm">
-                            Düzenle
-                        </a>
-
-                        <a asp-action="Details"
-                           asp-route-id="@item.Id"
-                           class="btn btn-info btn-sm text-white">
-                            Detay
-                        </a>
-
-                        <a asp-action="Delete"
-                           asp-route-id="@item.Id"
-                           class="btn btn-danger btn-sm">
-                            Sil
-                        </a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-
+            <div class="management-card-actions icon-actions">
+                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-soft btn-sm icon-action-btn" data-bs-toggle="tooltip" data-bs-title="Detay" aria-label="Detay">
+                    <i class="bi bi-eye-fill"></i>
+                </a>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm icon-action-btn" data-bs-toggle="tooltip" data-bs-title="Düzenle" aria-label="Düzenle">
+                        <i class="bi bi-pencil-square"></i>
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm icon-action-btn" data-bs-toggle="tooltip" data-bs-title="Sil" aria-label="Sil">
+                        <i class="bi bi-trash-fill"></i>
+                    </a>
+                }
+            </div>
+        </article>
+    }
 </div>

@@ -1,65 +1,73 @@
-﻿@model ToplulukYonetimSistemi.Models.CommunityEvent
+@model ToplulukYonetimSistemi.Models.CommunityEvent
 
 @{
     ViewData["Title"] = "Etkinlik Detayları";
+    var image = !string.IsNullOrWhiteSpace(Model.CoverImagePath)
+        ? Url.Content(Model.CoverImagePath)
+        : Url.Content("~/images/campus-hero.png");
 }
 
-<h1>Etkinlik Detayları</h1>
+<img src="@image" alt="@Model.Title etkinlik görseli" class="event-detail-cover" />
 
-<div>
+<section class="page-heading event-detail-heading">
+    <div>
+        <p class="eyebrow">Etkinlik Detayı</p>
+        <h1>@(Model.Title ?? "Etkinlik")</h1>
+    </div>
+    <div class="button-row">
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                <i class="bi bi-pencil-square"></i> Düzenle
+            </a>
+        }
+        <a asp-action="Index" class="btn btn-soft">
+            <i class="bi bi-arrow-left"></i> Listeye Dön
+        </a>
+    </div>
+</section>
 
-    ```
-    <h4>Etkinlik Bilgileri</h4>
-    <hr />
+<div class="event-detail-grid">
+    <div class="card event-info-card">
+        <div class="card-body">
+            <div class="event-info-icon">
+                <i class="bi bi-calendar-event-fill"></i>
+            </div>
+            <span>Tarih</span>
+            <strong>@Model.EventDate.ToString("dd MMMM yyyy")</strong>
+        </div>
+    </div>
 
-    <dl class="row">
+    <div class="card event-info-card">
+        <div class="card-body">
+            <div class="event-info-icon">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <span>Topluluk</span>
+            <strong>@(Model.Community?.Name ?? "-")</strong>
+        </div>
+    </div>
 
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.EventDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.EventDate)
-        </dd>
-
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Community)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Community.Name)
-        </dd>
-
-    </dl>
-    ```
-
+    <div class="card event-info-card">
+        <div class="card-body">
+            <div class="event-info-icon">
+                <i class="bi bi-clock-fill"></i>
+            </div>
+            <span>Durum</span>
+            <strong>@(Model.EventDate >= DateTime.Today ? "Yaklaşan Etkinlik" : "Tamamlandı")</strong>
+        </div>
+    </div>
 </div>
 
-<div class="mt-3">
-
-    ```
-    <a asp-action="Edit"
-       asp-route-id="@Model?.Id"
-       class="btn btn-warning">
-        Düzenle
-    </a>
-
-    <a asp-action="Index"
-       class="btn btn-secondary">
-        Listeye Dön
-    </a>
-    ```
-
+<div class="card event-description-card mt-4">
+    <div class="card-body">
+        <div class="management-card-title mb-3">
+            <i class="bi bi-card-text"></i>
+            <div>
+                <h2>Açıklama</h2>
+                <span>Etkinlik hakkında detaylı bilgi</span>
+            </div>
+        </div>
+        <p>@(string.IsNullOrWhiteSpace(Model.Description) ? "Bu etkinlik için henüz açıklama eklenmedi." : Model.Description)</p>
+    </div>
 </div>

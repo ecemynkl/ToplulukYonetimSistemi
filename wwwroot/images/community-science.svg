@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" role="img" aria-label="Bilim topluluğu görseli">
+  <rect width="900" height="420" fill="#11312f"/>
+  <circle cx="690" cy="100" r="92" fill="#4ecdc4" opacity=".9"/>
+  <circle cx="200" cy="300" r="130" fill="#ffb703" opacity=".82"/>
+  <path d="M150 170 C260 70 430 80 530 185 S720 285 800 180" fill="none" stroke="#ffffff" stroke-width="16" stroke-linecap="round" opacity=".85"/>
+  <g fill="#ffffff" opacity=".95">
+    <circle cx="150" cy="170" r="16"/>
+    <circle cx="530" cy="185" r="16"/>
+    <circle cx="800" cy="180" r="16"/>
+  </g>
+</svg>

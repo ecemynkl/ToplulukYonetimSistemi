@@ -15,6 +15,9 @@ namespace ToplulukYonetimSistemi.Models
         [Display(Name = "Etkinlik Tarihi")]
         public DateTime EventDate { get; set; }
 
+        [Display(Name = "Kapak Görseli")]
+        public string? CoverImagePath { get; set; }
+
         [Display(Name = "Topluluk")]
         public int CommunityId { get; set; }
 

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" role="img" aria-label="Spor topluluğu görseli">
+  <rect width="900" height="420" fill="#0b6e4f"/>
+  <path d="M0 340 C180 280 270 365 450 310 S720 245 900 315 V420 H0 Z" fill="#d9ed92"/>
+  <circle cx="450" cy="205" r="118" fill="#ffffff"/>
+  <path d="M382 120 C330 210 378 300 466 323" fill="none" stroke="#0b6e4f" stroke-width="15"/>
+  <path d="M520 110 C575 200 520 292 430 323" fill="none" stroke="#0b6e4f" stroke-width="15"/>
+  <path d="M335 205 H565" stroke="#0b6e4f" stroke-width="15"/>
+</svg>

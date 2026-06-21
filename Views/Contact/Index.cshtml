@@ -1,115 +1,72 @@
-﻿@{
+@model ToplulukYonetimSistemi.Models.ContactMessage
+
+@{
     ViewData["Title"] = "İletişim";
 }
 
-<div class="container mt-5">
-
-    <div class="text-center mb-5">
-
-        <h1 class="fw-bold">
-            İletişim
-        </h1>
-
-        <p class="text-muted">
-            Bizimle iletişime geçmek için aşağıdaki formu doldurabilirsiniz.
-        </p>
-
+<section class="page-heading">
+    <div>
+        <h1>İletişim</h1>
     </div>
+</section>
 
-    <div class="row">
+@if (TempData["ContactSuccess"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["ContactSuccess"]
+    </div>
+}
 
-        <div class="col-md-7">
+<div class="contact-layout">
+    <form asp-action="Index" method="post" class="surface-form contact-form">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="card shadow-sm border-0">
-
-                <div class="card-body p-4">
-
-                    <form>
-
-                        <div class="mb-3">
-
-                            <label class="form-label">
-                                Ad Soyad
-                            </label>
-
-                            <input type="text"
-                                   class="form-control"
-                                   placeholder="Adınızı giriniz">
-
-                        </div>
-
-                        <div class="mb-3">
-
-                            <label class="form-label">
-                                E-Posta
-                            </label>
-
-                            <input type="email"
-                                   class="form-control"
-                                   placeholder="E-posta adresinizi giriniz">
-
-                        </div>
-
-                        <div class="mb-3">
-
-                            <label class="form-label">
-                                Mesaj
-                            </label>
-
-                            <textarea class="form-control"
-                                      rows="5"
-                                      placeholder="Mesajınızı yazınız"></textarea>
-
-                        </div>
-
-                        <button type="submit"
-                                class="btn btn-primary">
-
-                            Mesaj Gönder
-                        </button>
-
-                    </form>
-
-                </div>
-
+        <div class="contact-user-summary">
+            <i class="bi bi-person-check-fill"></i>
+            <div>
+                <span>Gönderen</span>
+                <strong>@Model.FullName</strong>
+                <small>@Model.Email</small>
             </div>
-
         </div>
 
-        <div class="col-md-5">
+        <input type="hidden" asp-for="FullName" />
+        <input type="hidden" asp-for="Email" />
 
-            <div class="card shadow-sm border-0 h-100">
-
-                <div class="card-body p-4">
-
-                    <h4 class="fw-bold mb-4">
-                        İletişim Bilgileri
-                    </h4>
-
-                    <p>
-                        📍 Bursa / Orhangazi
-                    </p>
-
-                    <p>
-                        📧 info@kampusplatformu.com
-                    </p>
-
-                    <p>
-                        📞 0536 425 63 41
-                    </p>
-
-                    <hr>
-
-                    <p class="text-muted">
-                        TopluluklaR ve etkinlikler hakkında bizimle iletişime geçebilirsiniz.
-                    </p>
-
-                </div>
-
-            </div>
-
+        <div class="mb-4">
+            <label asp-for="Message" class="form-label"></label>
+            <textarea asp-for="Message" class="form-control" rows="6" placeholder="Mesajınızı yazınız"></textarea>
+            <span asp-validation-for="Message" class="text-danger"></span>
         </div>
 
-    </div>
+        <button type="submit" class="btn btn-primary btn-action">Mesaj Gönder</button>
+    </form>
 
+    <aside class="contact-info-card">
+        <h2>İletişim</h2>
+        <div>
+            <span>Adres</span>
+            <strong>Yeniköy Altı Çalılık Mevki Yeniköy - Orhangazi / BURSA</strong>
+        </div>
+        <div>
+            <span>Telefon</span>
+            <strong>
+                <a href="https://www.uludag.edu.tr/telefon" target="_blank" rel="noopener noreferrer">0 (224) 294 26 74</a>
+            </strong>
+            <strong>
+                <a href="https://www.uludag.edu.tr/telefon" target="_blank" rel="noopener noreferrer">0 (224) 573 98 62</a>
+            </strong>
+        </div>
+        <div>
+            <span>E-Posta</span>
+            <strong><a href="mailto:orhogis@uludag.edu.tr">orhogis@uludag.edu.tr</a></strong>
+        </div>
+        <p>Topluluklar, etkinlikler ve duyurular hakkında bizimle iletişime geçebilirsiniz.</p>
+    </aside>
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

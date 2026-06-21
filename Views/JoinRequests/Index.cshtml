@@ -1,0 +1,79 @@
+@model IEnumerable<ToplulukYonetimSistemi.Models.JoinRequest>
+
+@{
+    ViewData["Title"] = "Katılım Talepleri";
+}
+
+<section class="page-heading">
+    <div>
+        <h1>Katılım Talepleri</h1>
+    </div>
+</section>
+
+@if (TempData["JoinRequestSuccess"] is string successMessage)
+{
+    <div class="alert alert-success alert-modern" role="alert">@successMessage</div>
+}
+@if (TempData["JoinRequestWarning"] is string warningMessage)
+{
+    <div class="alert alert-warning alert-modern" role="alert">@warningMessage</div>
+}
+
+<div class="table-shell modern-table-shell compact-table-shell">
+    <table class="table modern-table compact-member-table align-middle">
+        <thead>
+            <tr>
+                <th>Kullanıcı</th>
+                <th>Topluluk</th>
+                <th>Tarih</th>
+                <th>Durum</th>
+                <th class="text-end">İşlem</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td><strong>@item.UserName</strong></td>
+                    <td>@(item.Community?.Name ?? "-")</td>
+                    <td>@item.RequestedDate.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>
+                        @if (item.IsApproved)
+                        {
+                            <span class="status-pill">Kabul edildi</span>
+                        }
+                        else if (item.IsRejected)
+                        {
+                            <span class="status-pill rejected">Reddedildi</span>
+                        }
+                        else
+                        {
+                            <span class="status-pill pending">Bekliyor</span>
+                        }
+                    </td>
+                    <td class="text-end">
+                        <div class="table-actions justify-content-end">
+                            @if (!item.IsApproved && !item.IsRejected)
+                            {
+                                <form asp-action="Approve" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-primary btn-sm">Kabul Et</button>
+                                </form>
+                                <form asp-action="Reject" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-soft btn-sm">Reddet</button>
+                                </form>
+                            }
+                            <form asp-action="Delete" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm icon-action-btn" data-confirm="Bu katılma isteğini silmek istediğine emin misin?" data-bs-toggle="tooltip" data-bs-title="Sil" aria-label="Sil">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

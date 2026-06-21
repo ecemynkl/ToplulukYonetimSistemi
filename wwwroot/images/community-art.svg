@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" role="img" aria-label="Sanat topluluğu görseli">
+  <rect width="900" height="420" fill="#392759"/>
+  <path d="M0 320 C170 240 290 390 450 300 S700 180 900 270 V420 H0 Z" fill="#f45b69"/>
+  <path d="M0 110 C180 25 330 150 470 95 S720 20 900 120 V0 H0 Z" fill="#5bc0eb" opacity=".85"/>
+  <circle cx="450" cy="210" r="92" fill="#fde74c"/>
+  <path d="M380 230 C420 170 490 170 525 232" fill="none" stroke="#392759" stroke-width="18" stroke-linecap="round"/>
+</svg>

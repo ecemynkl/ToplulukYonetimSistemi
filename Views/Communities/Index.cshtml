@@ -1,80 +1,105 @@
-﻿@model IEnumerable<ToplulukYonetimSistemi.Models.Community>
+@model IEnumerable<ToplulukYonetimSistemi.Models.Community>
 
 @{
     ViewData["Title"] = "Topluluklar";
+    var images = new[]
+    {
+        Url.Content("~/images/community-science.svg"),
+        Url.Content("~/images/community-art.svg"),
+        Url.Content("~/images/community-tech.svg"),
+        Url.Content("~/images/community-sport.svg")
+    };
 }
 
-<div class="container mt-4">
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
-
-        <h1 class="fw-bold">
-            Topluluklar
-        </h1>
-
-        <a asp-action="Create"
-           class="btn btn-primary">
-
-            Yeni Topluluk Oluştur
-        </a>
-
+<section class="page-heading">
+    <div>
+        <h1>Topluluklar</h1>
     </div>
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Create" class="btn btn-primary btn-action">
+            <i class="bi bi-plus-circle"></i> Yeni Topluluk Oluştur
+        </a>
+    }
+</section>
 
-    <div class="row">
+@if (TempData["CommunitySuccess"] is string successMessage)
+{
+    <div class="alert alert-success alert-modern" role="alert">@successMessage</div>
+}
+@if (TempData["CommunityWarning"] is string warningMessage)
+{
+    <div class="alert alert-warning alert-modern" role="alert">@warningMessage</div>
+}
 
-        @foreach (var item in Model)
-        {
-            <div class="col-md-4 mb-4">
+<div class="management-card-grid">
+    @foreach (var item in Model)
+    {
+        var image = !string.IsNullOrWhiteSpace(item.CoverImagePath)
+            ? Url.Content(item.CoverImagePath)
+            : images[Math.Abs(item.Id) % images.Length];
+        var memberNames = item.MemberCommunities
+            .Where(mc => mc.Member != null && !string.IsNullOrWhiteSpace(mc.Member.FullName))
+            .Select(mc => mc.Member!.FullName!)
+            .ToList();
 
-                <div class="card shadow-sm border-0 h-100">
-
-                    <div class="card-body">
-
-                        <h3 class="card-title fw-bold">
-                            @item.Name
-                        </h3>
-
-                        <p class="card-text text-muted mt-3">
-                            @item.Description
-                        </p>
-
-                        <p class="text-secondary">
-                            <strong>Oluşturulma Tarihi:</strong>
-                            @item.CreatedDate.ToShortDateString()
-                        </p>
-
+        <article class="management-card">
+            <img src="@image" alt="@item.Name topluluğu görseli" class="management-card-media" />
+            <div class="management-card-body">
+                <div class="management-card-title">
+                    <i class="bi bi-building"></i>
+                    <div>
+                        <h2>@(item.Name ?? "Adsız Topluluk")</h2>
+                        <span>@item.CreatedDate.ToString("dd.MM.yyyy") tarihinde oluşturuldu</span>
                     </div>
-
-                    <div class="card-footer bg-white border-0 pb-3">
-
-                        <a asp-action="Edit"
-                           asp-route-id="@item.Id"
-                           class="btn btn-warning btn-sm">
-
-                            Düzenle
-                        </a>
-
-                        <a asp-action="Details"
-                           asp-route-id="@item.Id"
-                           class="btn btn-info btn-sm text-white">
-
-                            Detay
-                        </a>
-
-                        <a asp-action="Delete"
-                           asp-route-id="@item.Id"
-                           class="btn btn-danger btn-sm">
-
-                            Sil
-                        </a>
-
-                    </div>
-
                 </div>
 
+                <p>@(string.IsNullOrWhiteSpace(item.Description) ? "Bu topluluk için henüz açıklama eklenmedi." : item.Description)</p>
+
+                <div class="metric-row">
+                    <span><i class="bi bi-person-check"></i> @memberNames.Count üye</span>
+                </div>
+
+                @if (User.IsInRole("Admin") && memberNames.Any())
+                {
+                    <div class="tag-list">
+                        @foreach (var memberName in memberNames.Take(3))
+                        {
+                            <span class="member-tag">@memberName</span>
+                        }
+                        @if (memberNames.Count > 3)
+                        {
+                            <span class="member-tag muted">+@(memberNames.Count - 3)</span>
+                        }
+                    </div>
+                }
             </div>
-        }
 
-    </div>
-
+            <div class="management-card-actions icon-actions">
+                <a asp-controller="CommunityEvents" asp-action="Index" asp-route-communityId="@item.Id" asp-route-upcomingOnly="true" class="btn btn-primary btn-sm">
+                    <i class="bi bi-calendar-event"></i> Etkinlikler
+                </a>
+                @if (!User.IsInRole("Admin"))
+                {
+                    <form asp-action="RequestJoin" asp-route-id="@item.Id" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-soft btn-sm" data-confirm="Bu topluluğa katılmak istediğine emin misin?">
+                            <i class="bi bi-send"></i> Katılma İsteği
+                        </button>
+                    </form>
+                }
+                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-soft btn-sm icon-action-btn" data-bs-toggle="tooltip" data-bs-title="Detay" aria-label="Detay">
+                    <i class="bi bi-eye-fill"></i>
+                </a>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-soft btn-sm icon-action-btn" data-bs-toggle="tooltip" data-bs-title="Düzenle" aria-label="Düzenle">
+                        <i class="bi bi-pencil-square"></i>
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm icon-action-btn" data-bs-toggle="tooltip" data-bs-title="Sil" aria-label="Sil">
+                        <i class="bi bi-trash-fill"></i>
+                    </a>
+                }
+            </div>
+        </article>
+    }
 </div>

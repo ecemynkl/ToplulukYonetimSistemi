@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" role="img" aria-label="Teknoloji topluluğu görseli">
+  <rect width="900" height="420" fill="#13293d"/>
+  <rect x="120" y="90" width="300" height="210" rx="28" fill="#00a6a6"/>
+  <rect x="480" y="120" width="300" height="180" rx="28" fill="#f7b801"/>
+  <g stroke="#ffffff" stroke-width="14" stroke-linecap="round" opacity=".9">
+    <path d="M210 175 h120"/>
+    <path d="M210 220 h80"/>
+    <path d="M565 205 h130"/>
+    <path d="M630 150 v110"/>
+  </g>
+</svg>

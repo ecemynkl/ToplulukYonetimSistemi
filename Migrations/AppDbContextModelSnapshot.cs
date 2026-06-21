@@ -106,9 +106,6 @@ namespace ToplulukYonetimSistemi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CommunityId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Department")
                         .HasColumnType("nvarchar(max)");
 
@@ -123,9 +120,22 @@ namespace ToplulukYonetimSistemi.Migrations
 
                     b.HasKey("Id");
 
+                    b.ToTable("Members");
+                });
+
+            modelBuilder.Entity("ToplulukYonetimSistemi.Models.MemberCommunity", b =>
+                {
+                    b.Property<int>("MemberId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CommunityId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MemberId", "CommunityId");
+
                     b.HasIndex("CommunityId");
 
-                    b.ToTable("Members");
+                    b.ToTable("MemberCommunities");
                 });
 
             modelBuilder.Entity("ToplulukYonetimSistemi.Models.Announcement", b =>
@@ -142,7 +152,7 @@ namespace ToplulukYonetimSistemi.Migrations
             modelBuilder.Entity("ToplulukYonetimSistemi.Models.CommunityEvent", b =>
                 {
                     b.HasOne("ToplulukYonetimSistemi.Models.Community", "Community")
-                        .WithMany()
+                        .WithMany("Events")
                         .HasForeignKey("CommunityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -150,20 +160,35 @@ namespace ToplulukYonetimSistemi.Migrations
                     b.Navigation("Community");
                 });
 
-            modelBuilder.Entity("ToplulukYonetimSistemi.Models.Member", b =>
+            modelBuilder.Entity("ToplulukYonetimSistemi.Models.MemberCommunity", b =>
                 {
                     b.HasOne("ToplulukYonetimSistemi.Models.Community", "Community")
-                        .WithMany("Members")
+                        .WithMany("MemberCommunities")
                         .HasForeignKey("CommunityId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Community");
+
+                    b.HasOne("ToplulukYonetimSistemi.Models.Member", "Member")
+                        .WithMany("MemberCommunities")
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Member");
                 });
 
             modelBuilder.Entity("ToplulukYonetimSistemi.Models.Community", b =>
                 {
-                    b.Navigation("Members");
+                    b.Navigation("Events");
+
+                    b.Navigation("MemberCommunities");
+                });
+
+            modelBuilder.Entity("ToplulukYonetimSistemi.Models.Member", b =>
+                {
+                    b.Navigation("MemberCommunities");
                 });
 #pragma warning restore 612, 618
         }

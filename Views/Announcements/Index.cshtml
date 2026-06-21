@@ -1,0 +1,51 @@
+@model IEnumerable<ToplulukYonetimSistemi.Models.Announcement>
+
+@{
+    ViewData["Title"] = "Gündem";
+}
+
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">Kampüs Haber Akışı</p>
+        <h1>Gündem</h1>
+    </div>
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Create" class="btn btn-primary btn-action">
+            <i class="bi bi-plus-circle"></i> Yeni Duyuru Ekle
+        </a>
+    }
+</section>
+
+<div class="campus-news-grid">
+    @foreach (var item in Model)
+    {
+        var image = !string.IsNullOrWhiteSpace(item.CoverImagePath)
+            ? Url.Content(item.CoverImagePath)
+            : Url.Content("~/images/campus-hero.png");
+
+        <article class="campus-news-card">
+            <img src="@image" alt="@item.Title kapak fotoğrafı" class="campus-news-image" />
+            <div class="campus-news-body">
+                <div class="campus-news-meta">
+                    <span><i class="bi bi-building"></i> @(item.Community?.Name ?? "Genel Duyuru")</span>
+                    <span><i class="bi bi-calendar3"></i> @item.CreatedDate.ToString("dd.MM.yyyy")</span>
+                </div>
+                <h2>@item.Title</h2>
+                <p>@item.Content</p>
+            </div>
+
+            @if (User.IsInRole("Admin"))
+            {
+                <div class="campus-news-actions icon-actions">
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm icon-action-btn" data-bs-toggle="tooltip" data-bs-title="Düzenle" aria-label="Düzenle">
+                        <i class="bi bi-pencil-square"></i>
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm icon-action-btn" data-bs-toggle="tooltip" data-bs-title="Sil" aria-label="Sil">
+                        <i class="bi bi-trash-fill"></i>
+                    </a>
+                </div>
+            }
+        </article>
+    }
+</div>

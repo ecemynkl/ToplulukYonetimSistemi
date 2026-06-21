@@ -1,0 +1,28 @@
+@model ToplulukYonetimSistemi.Models.Announcement
+
+@{
+    ViewData["Title"] = "Duyuruyu Düzenle";
+}
+
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">Gündem</p>
+        <h1>Duyuruyu Düzenle</h1>
+    </div>
+    <a asp-action="Index" class="btn btn-soft">Listeye Dön</a>
+</section>
+
+<form asp-action="Edit" enctype="multipart/form-data" class="surface-form">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Id" />
+    @await Html.PartialAsync("_Form", Model)
+    <button type="submit" class="btn btn-primary btn-action">
+        <i class="bi bi-check-circle"></i> Değişiklikleri Kaydet
+    </button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

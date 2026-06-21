@@ -1,0 +1,29 @@
+@model ToplulukYonetimSistemi.Models.ContactMessage
+
+@{
+    ViewData["Title"] = "Mesaj Detayı";
+}
+
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">İletişim Mesajı</p>
+        <h1>@Model.FullName</h1>
+    </div>
+    <a asp-action="Index" class="btn btn-soft">Mesajlara Dön</a>
+</section>
+
+<div class="info-panel">
+    <dl>
+        <dt>E-Posta</dt>
+        <dd>@Model.Email</dd>
+        <dt>Gönderim Tarihi</dt>
+        <dd>@Model.SentDate.ToString("dd.MM.yyyy HH:mm")</dd>
+        <dt>Mesaj</dt>
+        <dd>@Model.Message</dd>
+    </dl>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger btn-action">Mesajı Sil</button>
+    </form>
+</div>

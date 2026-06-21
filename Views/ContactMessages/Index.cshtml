@@ -1,0 +1,48 @@
+@model IEnumerable<ToplulukYonetimSistemi.Models.ContactMessage>
+
+@{
+    ViewData["Title"] = "İletişim Mesajları";
+}
+
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">Admin Paneli</p>
+        <h1>İletişim Mesajları</h1>
+    </div>
+</section>
+
+<div class="message-list">
+    @if (Model.Any())
+    {
+        @foreach (var item in Model)
+        {
+            <article class="message-card @(item.IsRead ? "" : "unread")">
+                <div>
+                    <div class="message-head">
+                        <strong>@item.FullName</strong>
+                        @if (!item.IsRead)
+                        {
+                            <span class="status-pill">Yeni</span>
+                        }
+                    </div>
+                    <span class="message-email">@item.Email</span>
+                    <p>@item.Message</p>
+                </div>
+
+                <div class="message-actions">
+                    <span>@item.SentDate.ToString("dd.MM.yyyy HH:mm")</span>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-soft btn-sm icon-action-btn" data-bs-toggle="tooltip" data-bs-title="Oku" aria-label="Oku">
+                        <i class="bi bi-eye-fill"></i>
+                    </a>
+                </div>
+            </article>
+        }
+    }
+    else
+    {
+        <div class="empty-announcement">
+            <h3>Henüz mesaj yok</h3>
+            <p>İletişim formundan gelen mesajlar burada listelenecek.</p>
+        </div>
+    }
+</div>

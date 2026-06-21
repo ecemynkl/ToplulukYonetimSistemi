@@ -361,3 +361,10 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Local build/check artifacts
+build-check-output/
+.build-check/
+.appdata/
+.dotnet/
+App_Data/DataProtectionKeys/

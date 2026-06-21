@@ -9,6 +9,9 @@ namespace ToplulukYonetimSistemi.Models
         [Display(Name = "Ad Soyad")]
         public string? FullName { get; set; }
 
+        [Display(Name = "Öğrenci Numarası")]
+        public string? StudentNumber { get; set; }
+
         [Display(Name = "E-Posta")]
         public string? Email { get; set; }
 
@@ -18,7 +21,13 @@ namespace ToplulukYonetimSistemi.Models
         [Display(Name = "Bölüm")]
         public string? Department { get; set; }
 
-        public ICollection<MemberCommunity>? MemberCommunities { get; set; }
+        [Display(Name = "Profil Resmi")]
+        public string? ProfileImagePath { get; set; }
+
+        [Display(Name = "Kayıt Tarihi")]
+        public DateTime RegisteredDate { get; set; } = DateTime.Today;
+
+        public ICollection<MemberCommunity> MemberCommunities { get; set; } = new List<MemberCommunity>();
 
     }
 }
